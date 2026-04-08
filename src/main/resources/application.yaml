@@ -1,0 +1,57 @@
+# =========================
+# Server
+# =========================
+server:
+  port: 8087
+
+spring:
+  application:
+    name: integrationservice
+
+# =========================
+# Kafka Configuration
+# =========================
+kafka:
+  brokers: localhost:9092      # ? replace with your Kafka broker IP
+  topic: NOTIFICATION_TOPIC #my-topic
+  group-id: camelid
+  auto-offset-reset: earliest
+
+# =========================
+# AWS Configuration
+# =========================
+aws:
+  region: ca-central-1
+  sqs:
+    queue-name: myQueue        # Use this name in Camel route
+    # queue-url is optional, Camel only needs the name
+
+# =========================
+# Camel Component Configuration
+# =========================
+camel:
+  springboot:
+    name: kafka-to-sqs-camel
+    main-run-controller: true
+
+  component:
+    kafka:
+      brokers: ${kafka.brokers}
+      groupId: ${kafka.group-id}
+      autoOffsetReset: ${kafka.auto-offset-reset}
+
+    aws2-sqs:
+      region: ${aws.region}
+      useDefaultCredentialsProvider: true
+
+# =========================
+# Logging
+# =========================
+logging:
+  level:
+    root: INFO
+    org.apache.camel: INFO
+#    org.apache.camel.component.kafka: DEBUG
+#    org.apache.kafka.clients.consumer: DEBUG
+    org.apache.kafka: WARN
+    software.amazon.awssdk: WARN
